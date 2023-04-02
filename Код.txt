@@ -1,0 +1,767 @@
+import java.util.*;
+import static java.lang.Math.*;
+
+class func {
+
+    public static boolean num1_1(int x, int n) {
+        // является ли число n-ричным?
+
+        for (int i = 1; i <= 10; i++) {
+            if (x % 10 >= n) {
+                return false;
+            }
+            x /= 10;
+        }
+        return true;
+    }
+
+    public static int[] num1_2(int x) {
+        // перевод int в массив
+
+        int N = 0;
+        int x_copy = x;
+        for (int i = 0; i < 10; i++) {
+            if (x_copy % 10 > 0) {
+                N++;
+            }
+            x_copy /= 10;
+        }
+        x_copy = x;
+        int[] mass = new int[N];
+        for (int i = N - 1; i >= 0; i--) {
+            mass[i] = x_copy % 10;
+            x_copy /= 10;
+        }
+        return mass;
+    }
+
+    public static int[] num1_3(int[] mass, int N) {
+        // перевод массива в N-ричную СС (массив)
+
+        double x_d = 0;
+        for (int i = 0; i < mass.length; i++) {
+            x_d += mass[i] * pow(N, -i - 1);
+        }
+
+        int[] mass_new = new int[6];
+        int x_i = (int) (x_d * pow(10, 6));
+        for (int i = 0; i < 6; i++) {
+            mass_new[5 - i] = x_i % 10;
+            x_i /= 10;
+
+        }
+
+        return mass_new;
+    }
+
+    public static double num4_1(int[] mass) {
+        // перевод массива в N-ричную СС (массив)
+        int s_i = 0;
+        for (int i : mass) {
+            s_i += i;
+        }
+        return ((double) s_i) / mass.length;
+    }
+
+    public static double[][] num7_1(int m, int x) {
+
+        double[][] mass = new double[m][m];
+        int S = ((mass.length + 1) * mass.length) / 2 - 1 + x;
+        mass = num7_2(mass, x, 0, S);
+        return mass;
+    }
+
+    public static double[][] num7_2(double[][] mass, int x, int m, int S) {
+
+        if (S - x == 5) {
+            mass[m][m * 2] = x;
+            x += 1;
+            mass[m + 1][m * 2 + 1] = x;
+            x += 1;
+            mass[m + 2][m * 2 + 2] = x;
+            x += 1;
+            mass[m + 1][m * 2 + 2] = x;
+            x += 1;
+            mass[m][m * 2 + 2] = x;
+            x += 1;
+            mass[m][m * 2 + 1] = x;
+            return mass;
+        } else if (S - x == 2) {
+            mass[m][m * 2] = x;
+            x += 1;
+            mass[m + 1][m * 2 + 1] = x;
+            x += 1;
+            mass[m][m * 2 + 1] = x;
+            return mass;
+        } else if (S == x) {
+            mass[m][m * 2] = x;
+            return mass;
+        } else {
+            int n_1 = m * 2;
+            for (int m_i = m; m_i <= mass.length - 1 - m * 2; m_i++) {
+                mass[m_i][n_1] = x;
+                n_1 += 1;
+                x += 1;
+            }
+            for (int m_i = mass.length - 2 - m * 2; m_i >= m; m_i--) {
+                mass[m_i][mass.length - 1 - m] = x;
+                x += 1;
+            }
+            for (int n_i = mass.length - 2 - m; n_i >= m * 2 + 1; n_i--) {
+                mass[m][n_i] = x;
+                x += 1;
+            }
+
+            num7_2(mass, x, m + 1, S);
+            return mass;
+        }
+    }
+
+    public static double[][] num8_1(double[][] mass, double[][] start) {
+
+        for (int m = 0; m < mass.length; m++) {
+            for (int n = 0; n < mass.length; n++) {
+                mass[m][n] = start[m % 4][n % 4];
+            }
+        }
+
+        return mass;
+    }
+
+    public static double[][] num9_1(double[][] mass, double[][] start_1, double[][] start_2) {
+
+        for (int m = 0; m < (mass.length); m++) {
+            for (int n = 0; n < (mass.length); n++) {
+                mass[m][n] = start_2[m % 4][n % 4];
+            }
+        }
+        for (int m = 0; m < (mass.length); m++) {
+            for (int n = 0; n < (mass.length); n++) {
+                if (m % 4 == 0 && n % 4 == 0 && abs(m - n) % 8 == 0) {
+                    for (int m_i = m; m_i < m + 4; m_i++) {
+                        for (int n_i = n; n_i < n + 4; n_i++) {
+                            if (n_i < mass.length && m_i < mass.length) {
+                                mass[m_i][n_i] = start_1[m_i % 4][n_i % 4];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return mass;
+    }
+
+    public static int[][] num10_1() {
+        Scanner in = new Scanner(System.in);
+        System.out.println("Сколько точек вы хотите проверить?");
+        int n = in.nextInt();
+        int[][] mass = new int[n][3];
+        for (int i = 0; i < n; i++) {
+            System.out.printf("x_%d = ", i + 1);
+            mass[i][0] = in.nextInt();
+            System.out.printf("y_%d = ", i + 1);
+            mass[i][1] = in.nextInt();
+        }
+        return mass;
+    }
+
+    public static int[][] num10_2(int[][] mass) {
+        int x, y;
+        for (int i = 0; i < mass.length; i++) {
+            x = mass[i][0];
+            y = mass[i][1];
+            // x1, y1, x2, y2
+            if (tru_line_y(0, x, y, 1, 4, -4, 0) ||
+                    tru_line_y(0, x, y, -4, 0, -2, -6) ||
+                    tru_line_y(0, x, y, -2, -6, -6, -4) ||
+                    tru_line_y(0, x, y, -6, -4, -7, 5) ||
+                    tru_line_y(0, x, y, -7, -5, 1, 4)
+                    ||
+                    tru_line_y(0, x, y, 3, -1, 5, 2) ||
+                    tru_line_y(0, x, y, 5, 2, 6, -3) ||
+                    tru_line_y(0, x, y, 6, -3, 3, -4) ||
+                    tru_line_y(0, x, y, 3, -4, 1, -7) ||
+                    tru_line_y(0, x, y, 1, -7, 1, -2) ||
+                    tru_line_y(0, x, y, 1, -2, 3, -1)) {
+                mass[i][2] = 0;
+            } else if ((x <= -6 && func.tru_line_y(1, x, y, -6, -4, -7, 5) && func.tru_line_y(-1, x, y, -7, 5, 1, 4))
+                    || (x >= -6 && x <= -4 && func.tru_line_y(-1, x, y, -7, 5, 1, 4) && func.tru_line_y(1, x, y, -6, -4, -2, -6))
+                    || (x >= -4 && func.tru_line_y(-1, x, y, -2, -6, -4, 0) && func.tru_line_y(1, x, y, -2, -6, -6, -4))
+                    || (x >= -4 && func.tru_line_y(-1, x, y, -7, 5, 1, 4) && func.tru_line_y(1, x, y, -4, 0, 1, 4))) {
+//                System.out.print("Фигура 1");
+                mass[i][2] = 1;
+            } else if ((x >= 1 && x <= 3 && func.tru_line_y(-1, x, y, 1, -2, 3, -1) && func.tru_line_y(1, x, y, 1, -7, 3, -4))
+                    || (x >= 3 && func.tru_line_y(-1, x, y, 3, -1, 5, 2) && func.tru_line_y(-1, x, y, 5, 2, 6, -3) && func.tru_line_y(1, x, y, 6, -3, 3, -4))) {
+//                System.out.print("Фигура 2");
+                mass[i][2] = 1;
+            } else {
+//                System.out.print("Ха, не попал!");
+                mass[i][2] = -1;
+            }
+        }
+        return mass;
+    }
+
+    public static void num10_3(int[][] mass) {
+        int x;
+        for (int i = 0; i < mass.length; i++) {
+            x = mass[i][2];
+            if (x == 1) {
+                System.out.printf("%d точка попала в область.\n", i + 1);
+            } else if (x == -1) {
+                System.out.printf("%d точка не попала в область.\n", i + 1);
+            } else {
+                System.out.printf("%d точка попала на границу фигуры.\n", i + 1);
+            }
+        }
+    }
+
+    public static double[][] num11_1(double[][] mass) {
+        Scanner in = new Scanner(System.in);
+        for (int i = 0; i < mass[1].length / 3; i++) {
+            System.out.printf("%d треугольник: \n", i + 1);
+            for (int j = 0; j < 3; j++) {
+                System.out.printf("x_%d = ", j + 1);
+                mass[0][i * 3 + j] = in.nextDouble();
+                System.out.printf("y_%d = ", j + 1);
+                mass[1][i * 3 + j] = in.nextDouble();
+            }
+        }
+        return mass;
+    }
+
+    public static double[][] num11_2(double[][] mass) {
+
+        double[][] out = new double[mass[0].length / 3][3];
+        int side;
+        boolean right_triangle;
+        for (int i = 0; i < mass[0].length / 3; i++) {
+            // проверка существования тругольника
+            // если да, то сразу заполнение результатов и переход к next итерации
+            right_triangle = true;
+            for (int j = 0; j < 3; j++) {
+                if (tru_line_y(0, mass[0][i * 3 + j], mass[1][i * 3 + j],
+                        mass[0][i * 3 + (j + 1) % 3], mass[1][i * 3 + (j + 1) % 3],
+                        mass[0][i * 3 + (j + 2) % 3], mass[1][i * 3 + (j + 2) % 3])) {
+                    right_triangle = false;
+                    break;
+                }
+            }
+            if (right_triangle == false) {
+                continue;
+            }
+            out[i][0] = 1;
+
+            double a = radius(mass[0][i * 3 + 0], mass[1][i * 3 + 0], mass[0][i * 3 + 1], mass[1][i * 3 + 1]);
+            double b = radius(mass[0][i * 3 + 1], mass[1][i * 3 + 1], mass[0][i * 3 + 2], mass[1][i * 3 + 2]);
+            double c = radius(mass[0][i * 3 + 2], mass[1][i * 3 + 2], mass[0][i * 3 + 0], mass[1][i * 3 + 0]);
+
+            // проверка равенства сторон треугольника
+            if (a == b && a == c) {
+                out[i][1] = 1;
+            } else if (a == b || a == c || b == c) {
+                out[i][1] = 3;
+            } else {
+                out[i][1] = 4;
+            }
+
+            // проверка прямоугольности тругольника
+            if (right_triangle(a, b, c) || right_triangle(b, a, c) || right_triangle(c, b, a)) {
+                out[i][1] = 2;
+            }
+
+            // площадь треугольника
+            double pp = (a + b + c) / 2;
+            out[i][2] = sqrt(pp * (pp - a) * (pp - b) * (pp - c));
+        }
+        return out;
+    }
+
+    public static boolean tru_line_y(double up_doun, double x, double y, double x1, double y1, double x2, double y2) {
+        // up_doun =  1 если точка выше прямой
+        //         =  0 на прямой
+        //         = -1 если точка ниже прямой
+        boolean out;
+        if (up_doun == 1) {
+            if (y > y1 + (x - x1) * (y2 - y1) / (x2 - x1)) {
+                out = true;
+            } else {
+                out = false;
+            }
+        } else if (up_doun == -1) {
+            if (y < y1 + (x - x1) * (y2 - y1) / (x2 - x1)) {
+                out = true;
+            } else {
+                out = false;
+            }
+        } else {
+            if (y == y1 + (x - x1) * (y2 - y1) / (x2 - x1)) {
+                out = true;
+            } else {
+                out = false;
+            }
+        }
+        return out;
+    }
+
+    public static double radius(double x1, double y1, double x2, double y2) {
+        return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
+    }
+
+    public static boolean right_triangle(double a, double b, double c) {
+        double gip = pow(a, 2);
+        double summ = pow(b, 2) + pow(c, 2);
+        gip = round(gip * 1000.0);
+        summ = round(summ * 1000.0);
+
+        if (gip == summ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean num12_1(double[][] mass_1, double[][] mass_2) {
+
+        double[][] ed_matric = new double[mass_1.length][mass_2[0].length];
+        for (int m = 0; m < ed_matric.length; m++) {
+            for (int n = 0; n < ed_matric[0].length; n++) {
+                if (m == n) {
+                    ed_matric[m][n] = 1;
+                }
+            }
+        }
+
+        double x;
+        for (int m = 0; m < ed_matric.length; m++) {
+            for (int n = 0; n < ed_matric[0].length; n++) {
+                x = 0;
+                for (int i = 0; i < ed_matric[0].length; i++) {
+                    x += mass_1[m][i] * mass_2[i][n];
+                }
+                if (round(x * 1000) != round(ed_matric[m][n] * 1000)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static double[][] mass_in(int i) {  // инициализация массива
+        Scanner in = new Scanner(System.in);
+
+        if (i == 2) {
+            System.out.println("Введите размерность матрицы:");
+            System.out.print("m (строк)    = ");
+            int m = in.nextInt();
+            System.out.print("n (столбцов) = ");
+            int n = in.nextInt();
+            double[][] mass = new double[m][n];
+            return mass;
+        } else {
+            System.out.println("Введите размерность квадратной матрицы:");
+            System.out.print("n = ");
+            int n = in.nextInt();
+            double[][] mass = new double[n][n];
+            return mass;
+        }
+    }
+
+    public static double[][] mass_enter(double[][] mass) {  // ручной ввод массива
+        // ввод - пустой массив нужной размерности
+        Scanner in = new Scanner(System.in);
+        System.out.printf("(ручной ввод массива %d*%d)\n", mass.length, mass[0].length);
+        for (int i = 0; i < mass.length; i++) {
+            System.out.printf("%d строка: \n", i + 1);
+            for (int j = 0; j < mass[0].length; j++) {
+                System.out.printf("x_%d = ", j + 1);
+                mass[i][j] = in.nextDouble();
+            }
+        }
+        return mass;
+    }
+
+
+
+    public static void mass_out(double[][] mass) { // форматированный вывод массива (sp - промежуток между числами
+
+        int[][] mass_spase = new int[mass.length][mass[0].length];
+        int k_last = 0, k_first = 1, k;
+        int x;
+        // определение позиций элемента в списке (для форматирования)
+        for (int m = 0; m < mass.length; m++) {
+            for (int n = 0; n < mass[0].length; n++) {
+                x = abs((int) (mass[m][n] % 1 * 1000));
+                k = 3;
+                for (int i = 2; i >= 0; i--) {
+                    if (x / stepen(10, i) > 0) {
+                        k = i;
+                    }
+                }
+                mass_spase[m][n] = 3 - k;
+                k_last = max(3 - k, k_last);
+
+                x = abs((int) mass[m][n]);
+                k = 0;
+                if (x == 0) {
+                    k++;
+                }
+                while (x > 0) {
+                    k++;
+                    x /= 10;
+                }
+                mass_spase[m][n] += k * 10;
+                k_first = max(k, k_first);
+            }
+        }
+        // форматированный вывод результатов
+        for (int m = 0; m < mass.length; m++) {
+            for (int n = 0; n < mass[0].length; n++) {
+                if (mass[m][n] >= 0) {
+                    System.out.print(" ");
+                }
+                for (int i = 0; i < k_first - mass_spase[m][n] / 10; i++) {
+                    System.out.print(" ");
+                }
+                if (mass_spase[m][n] % 10 == 0) {
+                    System.out.print((int) mass[m][n]);
+                    System.out.print(" ");
+                } else {
+                    System.out.printf("%." + mass_spase[m][n] % 10 + "f", mass[m][n]);
+                }
+                for (int i = 0; i < k_last - mass_spase[m][n] % 10 + 1; i++) {
+                    System.out.print(" ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    public static int stepen(int x, int n) {  // форматированный вывод массива (sp - промежуток между числами
+        int S = 1;
+        for (int i = 0; i < n; i++) {
+            S *= x;
+        }
+        return S;
+    }
+
+    public static double[][] mass_rundom(int m, int n, int min, int max) {  // форматированный вывод массива (sp - промежуток между числами
+        double[][] mass = new double[m][n];
+        for (int m_i = 0; m_i < mass.length; m_i++) {
+            for (int n_i = 0; n_i < mass[0].length; n_i++) {
+                mass[m_i][n_i] = round(random() * (max - min) + min);
+            }
+        }
+        return mass;
+    }
+}
+
+class Work_is_start {    // вариант 13
+
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+
+        int x_i, i_i, n_i, y_i, t_i;
+        double x_d, y_d, r_d;
+        boolean flag = false;
+
+
+        int num;
+        while (true) {
+            System.out.println("___Введите номер задачи от 1 до 12___");
+            num = in.nextInt();
+            switch (num) {
+                case 1:
+                    System.out.println("ВВедите число, в 7-ричной СС, которое стодержит десятичную часть:");
+                    in.nextLine();
+                    while (true) {
+                        String x_s = in.nextLine();
+
+                        i_i = x_s.indexOf(",");
+                        if (i_i == -1) {
+                            System.out.println("(Проверте правильность написания числа и повторите попытку)");
+                            continue;
+                        }
+                        x_i = Integer.parseInt(x_s.substring(i_i + 1));
+                        if (func.num1_1(x_i, 7)) {
+                            break;
+                        }
+                        System.out.println("(Проверте правильность написания числа и повторите попытку)");
+                    }
+                    int[] mass_1 = func.num1_2(x_i);
+
+                    System.out.println(Arrays.toString(mass_1) + " ввод");
+                    System.out.println(Arrays.toString(func.num1_3(mass_1, 9)) + " ответ");
+                    break;
+
+                case 2:
+                    System.out.println("Введите М - колличество чисел: ");
+                    n_i = in.nextInt();
+                    int[] mass_2 = new int[n_i];
+                    System.out.println("Желаете воспользоватеся random (иначе вводить вручную)?   Y or N");
+                    in.nextLine();
+                    String run = in.nextLine();
+
+                    if (run.equals("y") || run.equals("Y")) {
+                        x_i = (int) (n_i * random());
+                        y_i = (int) (n_i * random());
+                        while (x_i == y_i) {
+                            y_i = (int) (n_i * random());
+                        }
+                        mass_2[x_i] = -1;
+                        mass_2[y_i] = -1;
+                        for (int i = 0; i < n_i; i++) {
+                            if (mass_2[i] == -1) {
+                                mass_2[i] = 0;
+                            } else {
+                                mass_2[i] = (int) (random() * 20);
+                            }
+                            System.out.printf("x%d = %d \n", i + 1, mass_2[i]);
+                        }
+                    } else {
+                        for (int i = 0; i < n_i; i++) {
+                            System.out.printf("x%d = ", i + 1);
+                            mass_2[i] = in.nextInt();
+                        }
+                        x_i = 0;
+                        for (int i = 0; i < n_i; i++) {
+                            if (mass_2[i] == 0) {
+                                x_i += 1;
+                            }
+                        }
+                        if (x_i < 2) {
+                            System.out.println("Всё фигня, давай по новой. (мало нулей написал)");
+                            flag = true;
+                        }
+                    }
+                    ArrayList<Integer> mass_new = new ArrayList<>();
+                    for (int i = 1; i < n_i - 1; i++) {
+                        if (mass_2[i - 1] == 0 && mass_2[i + 1] == 0) {
+                            mass_new.add(0);
+                            while (mass_2[i] > 0) {
+                                mass_new.set(mass_new.size() - 1, mass_new.get(mass_new.size() - 1) + mass_2[i] % 10);
+                                mass_2[i] /= 10;
+                            }
+                        }
+                    }
+                    System.out.println(mass_new.toString());
+                    break;
+
+                case 3:
+                    System.out.println("Сколько случайных точек вы хотите проверить?\n(в диапазоне от -10 до +10)");
+                    n_i = in.nextInt();
+                    double[] mass_3 = new double[2 * n_i];
+                    for (int i = 0; i < 2 * n_i; i++) {
+                        mass_3[i] = (20 * (random() - 0.5));
+                    }
+                    System.out.print("Введите измерения окружности:\nx = ");
+                    x_d = in.nextDouble();
+                    System.out.print("y = ");
+                    y_d = in.nextDouble();
+                    System.out.print("R = ");
+                    r_d = in.nextDouble();
+
+                    System.out.println(Arrays.toString(mass_3));
+                    System.out.println("Вне окружности лежат точки:");
+                    ArrayList<Double> mass_3_arrl = new ArrayList<>();
+                    for (int i = 0; i < n_i; i++) {
+                        if (pow(pow((x_d - mass_3[i * 2]), 2) + pow((y_d - mass_3[i * 2 + 1]), 2), 1.0 / 2.0) > r_d) {
+                            System.out.printf("%d. x = %.1f, y = %.1f\n", (i + 1), mass_3[2 * i], mass_3[2 * i + 1]);
+                            mass_3_arrl.add(mass_3[2 * i]);
+                            mass_3_arrl.add(mass_3[2 * i + 1]);
+                        }
+                    }
+                    break;
+                case 4:
+                    System.out.println("Сколько элементов будет в массиве для сортировки?");
+                    n_i = in.nextInt();
+                    System.out.println("Сколько итераций провести (чем больше, тем точнее)?");
+                    t_i = in.nextInt();
+
+                    int[] mass_41 = new int[n_i], mass_42 = new int[n_i];
+                    int[] time_1 = new int[t_i], time_2 = new int[t_i];
+                    y_i = 0;
+                    for (int t = 0; t < t_i; t++) {
+
+                        for (int i = 0; i < n_i; i++) {
+                            mass_42[i] = (int) (100 * random());
+                            mass_41[i] = mass_42[i];
+                        }
+
+                        i_i = 0;
+                        while (true) {
+                            flag = false;
+                            for (int j = i_i; j <= (n_i - 2) - i_i; j++) {
+                                if (mass_42[j] > mass_42[j + 1]) {
+                                    x_i = mass_42[j];
+                                    mass_42[j] = mass_42[j + 1];
+                                    mass_42[j + 1] = x_i;
+                                    flag = true;
+                                    y_i += 1;
+                                }
+                            }
+                            for (int j = (n_i - 3); j >= i_i; j--) {
+                                if (mass_42[j] > mass_42[j + 1]) {
+                                    x_i = mass_42[j];
+                                    mass_42[j] = mass_42[j + 1];
+                                    mass_42[j + 1] = x_i;
+                                    flag = true;
+                                    y_i += 1;
+                                }
+                            }
+                            if (flag == false) {
+                                time_1[t] = y_i;
+                                y_i = 0;
+                                break;
+                            }
+                            i_i += 1;
+                        }
+
+                        i_i = 0;
+                        while (true) {
+                            flag = false;
+                            for (int j = 0; j <= (n_i - 2) - i_i; j++) {
+                                if (mass_41[j] > mass_41[j + 1]) {
+                                    x_i = mass_41[j];
+                                    mass_41[j] = mass_41[j + 1];
+                                    mass_41[j + 1] = x_i;
+                                    flag = true;
+                                    y_i += 1;
+                                }
+                            }
+                            if (flag == false) {
+                                break;
+                            }
+                            i_i += 1;
+                        }
+                        time_2[t] = y_i;
+                        y_i = 0;
+                    }
+                    System.out.println("Колличество перестановок в методах составила:");
+                    System.out.printf(" - Методом Шейкер-сортировки = %.1f\n", func.num4_1(time_1));
+                    System.out.printf(" - Методом Пузырька          = %.1f\n", func.num4_1(time_2));
+                    break;
+                case 5:
+                    System.out.println("Какую строчку вы хотите заменить с минимальной?  ");
+                    int st_1 = in.nextInt() - 1;
+                    int st_2 = st_1;
+
+                    double x_min;
+                    double[][] mass_5 = func.mass_in(2);
+                    if (mass_5.length == 1) {
+                        System.out.println("Невозможно произвести замену.");
+                        break;
+                    }
+                    while (st_1 == st_2) {
+                        mass_5 = func.mass_rundom(mass_5.length, mass_5[0].length, -100, 100);
+                        x_min = mass_5[0][0];
+                        for (int m = 0; m < mass_5.length; m++) {
+                            for (int n = 0; n < mass_5[0].length; n++) {
+                                if (mass_5[m][n] < x_min) {
+                                    st_2 = m;
+                                    x_min = mass_5[m][n];
+                                }
+                            }
+                        }
+                    }
+                    System.out.println("Сгенерированна матрица");
+                    func.mass_out(mass_5);
+
+                    for (int n = 0; n < mass_5[1].length; n++) {
+                        x_min = mass_5[st_1][n];
+                        mass_5[st_1][n] = mass_5[st_2][n];
+                        mass_5[st_2][n] = x_min;
+                    }
+                    System.out.println("Изменённая матрица");
+                    func.mass_out(mass_5);
+                    break;
+                case 6:
+                    double[][] mass_6 = func.mass_in(2);
+                    System.out.print("Коофициэнт b: ");
+                    int b = in.nextInt();
+                    System.out.println("Заполните первый столбец матрицы:");
+                    for (int m = 0; m < mass_6.length; m++) {
+                        mass_6[m][0] = in.nextInt();
+                    }
+                    for (int m = 0; m < mass_6.length; m++) {
+                        for (int n = 1; n < mass_6[0].length; n++) {
+                            mass_6[m][n] = mass_6[m][n - 1] + b;
+                        }
+                    }
+                    func.mass_out(mass_6);
+                    break;
+                case 7:
+                    System.out.println("Матрицу какого размера вы хотите заполнить?");
+                    n_i = in.nextInt();
+                    func.mass_out(func.num7_1(n_i, 1));
+                    break;
+                case 8:
+                    double[][] start_8 = {{1, 0, 0, 0},
+                            {9, 2, 0, 0},
+                            {8, 10, 3, 0},
+                            {7, 6, 5, 4}};
+                    double[][] mass_8 = func.mass_in(1);
+                    mass_8 = func.num8_1(mass_8, start_8);
+                    func.mass_out(mass_8);
+                    break;
+                case 9:
+                    double[][] start_9_1 = {{1, 2, 3, 4},
+                            {11, 12, 13, 5},
+                            {16, 15, 14, 6},
+                            {10, 9, 8, 7}};
+                    double[][] start_9_2 = {{1, 3, 4, 10},
+                            {2, 5, 9, 11},
+                            {6, 8, 12, 15},
+                            {7, 13, 14, 16}};
+                    double[][] mass_9 = func.mass_in(1);
+                    if (mass_9.length % 2 == 1) {
+                        System.out.println("n - должно быть только чётным.");
+                        break;
+                    }
+                    mass_9 = func.num9_1(mass_9, start_9_1, start_9_2);
+                    func.mass_out(mass_9);
+                    break;
+                case 10:
+                    int[][] mass_10 = func.num10_1();  // ввод
+                    mass_10 = func.num10_2(mass_10);      // вычисление
+                    func.num10_3(mass_10);             // вывод
+                    break;
+                case 11:
+                    System.out.println("Сколько треугольников вы хотите проверить?");
+                    int n = in.nextInt();
+                    double[][] mass_11 = new double[2][3 * n];
+                    mass_11 = func.num11_1(mass_11);
+                    System.out.println("По введённым данным составлен массив:");
+                    func.mass_out(mass_11);
+                    System.out.println("Ответ:");
+                    func.mass_out(func.num11_2(mass_11));
+                    break;
+                case 12:
+                    System.out.println("-- A:");
+                    double[][] mass12_1 = func.mass_in(1);
+                    mass12_1 = func.mass_enter(mass12_1);
+
+                    System.out.println("\n-- B:");
+                    double[][] mass12_2 = func.mass_in(1);
+                    mass12_2 = func.mass_enter(mass12_2);
+
+                    if (mass12_1.length == mass12_2.length) {
+                        if (func.num12_1(mass12_1, mass12_2)) {
+                            System.out.println("Эти матрицы являются обратными");
+                        } else {
+                            System.out.println("Эти матрицы НЕ являются обратными");
+                        }
+                    } else {
+                        System.out.println("Невозможно проверсти умножение матриц");
+                    }
+                    break;
+                default:
+                    System.out.println("Вы ввели неверный номер задания");
+            }
+            System.out.println();
+        }
+
+
+    }
+}
